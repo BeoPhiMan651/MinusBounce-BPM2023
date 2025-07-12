@@ -1,0 +1,37 @@
+name: Build and Upload Jar
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: temurin
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Rename output jar
+        run: |
+          mkdir output
+          cp build/libs/*.jar output/minusbounce-bpm.jar
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: minusbounce-bpm
+          path: output/minusbounce-bpm.jar
